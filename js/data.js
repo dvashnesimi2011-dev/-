@@ -24,15 +24,26 @@ function daysBetween(a, b) {
 
 const TODAY = new Date();
 
-/* --- זרימת לקוח: סדנת קרמיקה --- */
+/* --- זרימת לקוח: סדנת קרמיקה ---
+   פרטים אמיתיים מהרישום בבסלון (basalon.co.il) — כולל מחירון הקבוצה
+   בפועל, שהוא תמחור מדורג ולא מחיר-לאיש קווי. */
 const WORKSHOP = {
-  title: 'סדנת קרמיקה על האובניים',
-  subtitle: 'שעה אובניים + שעה עבודת יד · לזוגות ולקבוצות',
+  title: 'סדנת קרמיקה פרטית בסטודיו של תמימה',
+  subtitle: 'עבודת יד ואובניים · כל אחד/ת יוצר/ת שני כלים',
   duration: '2 שעות',
-  pricePerPerson: 220,
+  minParticipants: 2,
   maxParticipants: 6,
-  location: 'הסטודיו של תמימה, קמפוס האוניברסיטה העברית, ירושלים',
+  priceTiers: { 2: 680, 3: 900, 4: 1200, 5: 1500, 6: 1800 },
+  cancellationHours: 48,
+  reviewCount: 27,
+  reviewRating: 5,
+  location: 'דרך בלפור, גבעת רם, ירושלים',
+  pickupNote: 'הכלים עוברים ייבוש, שריפה וזיגוג בסטודיו — מוכנים לאיסוף (או משלוח בתוספת תשלום) כעבור כחודש.',
 };
+
+function workshopPrice(participants) {
+  return WORKSHOP.priceTiers[participants] || WORKSHOP.priceTiers[WORKSHOP.maxParticipants];
+}
 
 /* חלון הזמנה של 4 ימים קדימה (בהתאם למה שנבדק בדמו, ראו קובץ 04) */
 const AVAILABILITY = [
@@ -115,13 +126,14 @@ const ADMIN_TODAY = [
   { time: '20:30', name: 'שיעור קבוע — עדן שרון', kind: 'שיעור', participants: 1 },
 ];
 
+/* amount לכל סדנה מחושב ממחירון הקבוצה האמיתי (workshopPrice), לא מלינארי */
 const ADMIN_WORKSHOPS = [
-  { id: 1, name: 'קבוצת גן ילדים — יום הולדת', date: addDays(TODAY, 0), time: '10:00', participants: 6, source: 'בסלון', receipt: 'manual', amount: 1320 },
-  { id: 2, name: 'זוג — יובל ומאיה', date: addDays(TODAY, 0), time: '18:30', participants: 2, source: 'וואטסאפ', receipt: 'auto', amount: 440 },
-  { id: 3, name: 'משפחת אברג׳יל', date: addDays(TODAY, -1), time: '18:00', participants: 5, source: 'בסלון', receipt: 'manual', amount: 1100 },
-  { id: 4, name: 'רועי ודנה', date: addDays(TODAY, -1), time: '09:20', participants: 2, source: 'בסלון', receipt: 'manual', amount: 440 },
-  { id: 5, name: 'ימי הולדת — קבוצת נריה', date: addDays(TODAY, 1), time: '17:00', participants: 4, source: 'וואטסאפ', receipt: 'auto', amount: 880 },
-  { id: 6, name: 'קבוצת רווקות — שירה', date: addDays(TODAY, 3), time: '19:00', participants: 6, source: 'בסלון', receipt: 'pending', amount: 1320 },
+  { id: 1, name: 'קבוצת גן ילדים — יום הולדת', date: addDays(TODAY, 0), time: '10:00', participants: 6, source: 'בסלון', receipt: 'manual', amount: workshopPrice(6) },
+  { id: 2, name: 'זוג — יובל ומאיה', date: addDays(TODAY, 0), time: '18:30', participants: 2, source: 'וואטסאפ', receipt: 'auto', amount: workshopPrice(2) },
+  { id: 3, name: 'משפחת אברג׳יל', date: addDays(TODAY, -1), time: '18:00', participants: 5, source: 'בסלון', receipt: 'manual', amount: workshopPrice(5) },
+  { id: 4, name: 'רועי ודנה', date: addDays(TODAY, -1), time: '09:20', participants: 2, source: 'בסלון', receipt: 'manual', amount: workshopPrice(2) },
+  { id: 5, name: 'ימי הולדת — קבוצת נריה', date: addDays(TODAY, 1), time: '17:00', participants: 4, source: 'וואטסאפ', receipt: 'auto', amount: workshopPrice(4) },
+  { id: 6, name: 'קבוצת רווקות — שירה', date: addDays(TODAY, 3), time: '19:00', participants: 6, source: 'בסלון', receipt: 'pending', amount: workshopPrice(6) },
 ];
 
 const ADMIN_STUDENTS = [
@@ -142,6 +154,6 @@ const ADMIN_STUDENTS = [
   { name: 'הדר וייס', status: 'שולם', urgent: false, lessons: '3/4', absences: 0, phone: '054-1230000' },
 ];
 
-/* מחיר קבוע לחישוב קבלה ידנית — נגזר מ-WORKSHOP.pricePerPerson כדי שלא יוכל
-   להתפצל ממנו (מסך עדכון מחיר נפרד טרם קיים, ראו קובץ 02) */
-const FIXED_WORKSHOP_PRICE = WORKSHOP.pricePerPerson;
+/* לקבלה ידנית (סדנה ששולמה דרך בסלון) אין "מחיר קבוע" נפרד — משתמשים
+   באותו מחירון מדורג של workshopPrice(), כי זה בדיוק המחירון שהסטודיו
+   קובעת בעצמה (לא נשלף מבסלון, ראו קובץ 02). מסך עדכון מחירון נפרד טרם קיים. */

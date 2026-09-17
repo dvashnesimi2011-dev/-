@@ -24,7 +24,7 @@
     <div class="hub-list">
       <button class="hub-row" data-open="client">
         <span class="hub-row-name serif">לקוח/ה</span>
-        <span class="hub-row-fact">הזמנת סדנה — שעה אובניים ושעה עבודת יד, עד 6 משתתפים, עם נעילת משבצת בתשלום ואישור אוטומטי בוואטסאפ.</span>
+        <span class="hub-row-fact">הזמנת סדנה — שני כלים לכל אחד/ת, 2 עד 6 משתתפים, עם נעילת משבצת בתשלום ואישור אוטומטי בוואטסאפ.</span>
         <span class="hub-row-arrow"><i class="ti ti-arrow-left"></i></span>
       </button>
       <button class="hub-row" data-open="admin">
@@ -71,7 +71,7 @@
             <div class="stagger-in" style="display:flex;flex-direction:column;gap:12px;">
               <button class="select-row" data-activity="workshop">
                 <span class="select-row-icon"><i class="ti ti-flower"></i></span>
-                <span class="select-row-body"><span class="select-row-title">סדנה חד״פ</span><span class="select-row-sub">לזוגות ולקבוצות · 2 שעות</span></span>
+                <span class="select-row-body"><span class="select-row-title">סדנה חד״פ</span><span class="select-row-sub">לזוגות ולקבוצות · 2 שעות · שני כלים לכל אחד/ת</span></span>
                 <span class="select-row-check" style="border:none;"><i class="ti ti-chevron-left"></i></span>
               </button>
               <button class="select-row" data-activity="course">
@@ -93,14 +93,17 @@
           <div class="photo-bleed p-hands-press">
             <button class="icon-btn photo-bleed-back" data-back="client" aria-label="חזרה"><i class="ti ti-chevron-right"></i></button>
             <div class="hero-caption">
-              <h2 class="serif">שעה אובניים,<br>שעה עבודת יד</h2>
+              <h2 class="serif">שני כלים לכל אחד/ת,<br>ביד ועל האובניים</h2>
+              <div style="font-size:12.5px;margin-top:4px;opacity:0.85;display:flex;align-items:center;gap:5px;">
+                <i class="ti ti-star"></i> <span id="review-badge"></span>
+              </div>
             </div>
           </div>
           <div class="screen-body no-pad-top sheet-rise">
             <div class="stepper" style="margin-bottom:20px;">
               <div>
                 <div class="stepper-label">מספר משתתפים</div>
-                <div class="stepper-hint">עד 6 משתתפים במשבצת</div>
+                <div class="stepper-hint">2 עד 6 משתתפים במשבצת</div>
               </div>
               <div class="stepper-controls">
                 <button class="stepper-btn" id="stepper-minus" aria-label="הפחתה"><i class="ti ti-minus"></i></button>
@@ -146,6 +149,9 @@
             <p style="text-align:center;font-size:12px;color:var(--c-text-faint);margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px;">
               <i class="ti ti-shield-lock"></i> תשלום מאובטח, מופעל ע״י Summit
             </p>
+            <p style="text-align:center;font-size:12px;color:var(--c-text-faint);margin-top:4px;">
+              ביטול עד 48 שעות לפני הסדנה מזכה בהחזר מלא
+            </p>
           </div>
         </section>
 
@@ -158,15 +164,20 @@
               </div>
               <h2 class="success-title serif">ההזמנה אושרה!</h2>
               <p class="success-sub">מסך זה יישאר כאן תמיד, גם אם הודעת הוואטסאפ מתעכבת בדרך אליך.</p>
-              <div class="card" style="text-align:right;margin-bottom:24px;">
-                <div class="select-row-sub" style="margin-bottom:6px;">סדנת קרמיקה על האובניים</div>
+              <div class="card" style="text-align:right;margin-bottom:16px;">
+                <div class="select-row-sub" id="confirm-title" style="margin-bottom:6px;"></div>
                 <div class="select-row-title" id="confirm-when" style="margin-bottom:10px;"></div>
                 <hr class="divider" style="margin:10px 0;">
-                <div style="display:flex;justify-content:space-between;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
                   <span style="color:var(--c-text-soft);font-size:14px;">שולם</span>
                   <span id="confirm-price" style="font-weight:700;"></span>
                 </div>
+                <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--c-text-soft);">
+                  <i class="ti ti-map-pin" style="flex-shrink:0;margin-top:2px;"></i>
+                  <span id="confirm-location"></span>
+                </div>
               </div>
+              <p class="success-sub" id="confirm-pickup-note" style="font-size:13px;"></p>
               <button class="btn btn-primary btn-block" id="confirm-to-wa-customer">הצגת הודעת האישור</button>
             </div>
           </div>
@@ -300,14 +311,13 @@
           <section class="screen" data-screen="a-receipt" style="flex-direction:column;">
             <div class="section-title" style="margin-top:0;">יצירת קבלה ידנית</div>
             <p style="color:var(--a-text-soft);font-size:13.5px;margin-bottom:16px;line-height:1.7;">
-              עבור סדנאות ששולמו דרך בסלון (לא דרך קישור תשלום סאמיט) — הסכום מחושב אוטומטית לפי מחיר קבוע במערכת, ואינו נשלף מבסלון.
+              עבור סדנאות ששולמו דרך בסלון (לא דרך קישור תשלום סאמיט) — הסכום מחושב אוטומטית לפי מחירון הקבוצה הקבוע במערכת, ואינו נשלף מבסלון.
             </p>
             <div id="receipt-picker-list" style="display:flex;flex-direction:column;gap:10px;"></div>
             <div class="card" id="receipt-calc" style="display:none;margin-top:20px;max-width:380px;">
               <div class="card-title">חישוב הסכום</div>
               <div class="calc-row"><span class="lbl">מספר משתתפים</span><span id="calc-participants"></span></div>
-              <div class="calc-row"><span class="lbl">מחיר קבוע למשתתף</span><span id="calc-price-each"></span></div>
-              <div class="calc-row total"><span class="lbl">סה״כ לקבלה</span><span id="calc-total"></span></div>
+              <div class="calc-row total"><span class="lbl">סה״כ לקבלה (לפי מחירון קבוצה קבוע)</span><span id="calc-total"></span></div>
               <button class="btn btn-primary btn-block" id="receipt-generate-btn" style="margin-top:16px;">הפקת חשבונית + קבלה בסאמיט</button>
             </div>
           </section>
@@ -477,9 +487,9 @@
   </div><!-- /.phone-stage -->
 </div>
 
-<script src="js/data.js?v=2"></script>
+<script src="js/data.js?v=3"></script>
 <script src="js/strata.js?v=1"></script>
-<script src="js/app.js?v=2"></script>
+<script src="js/app.js?v=3"></script>
 <script src="js/motion-fx.js?v=4"></script>
 </body>
 </html>

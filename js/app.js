@@ -156,7 +156,9 @@ function renderAvailability() {
   const c = state.client;
   $('#lead-name').textContent = c.leadName;
   $('#participants-value').textContent = c.participants;
-  $('#stepper-minus').disabled = c.participants <= 1;
+  const reviewEl = $('#review-badge');
+  if (reviewEl) reviewEl.textContent = `${WORKSHOP.reviewRating.toFixed(1)} · ${WORKSHOP.reviewCount} ביקורות`;
+  $('#stepper-minus').disabled = c.participants <= WORKSHOP.minParticipants;
   $('#stepper-plus').disabled = c.participants >= WORKSHOP.maxParticipants;
 
   const chipRow = $('#day-chip-row');
@@ -192,10 +194,10 @@ function renderAvailability() {
   }
 
   $('#to-payment-btn').disabled = !c.time;
-  $('#summary-price').textContent = `${(WORKSHOP.pricePerPerson * c.participants).toLocaleString('he-IL')} ₪`;
+  $('#summary-price').textContent = `${workshopPrice(c.participants).toLocaleString('he-IL')} ₪`;
 }
 
-$('#stepper-minus')?.addEventListener('click', () => { state.client.participants = Math.max(1, state.client.participants - 1); renderAvailability(); });
+$('#stepper-minus')?.addEventListener('click', () => { state.client.participants = Math.max(WORKSHOP.minParticipants, state.client.participants - 1); renderAvailability(); });
 $('#stepper-plus')?.addEventListener('click', () => { state.client.participants = Math.min(WORKSHOP.maxParticipants, state.client.participants + 1); renderAvailability(); });
 $('#to-payment-btn')?.addEventListener('click', () => goToScreen('client', 'c3', 'forward'));
 
@@ -213,7 +215,7 @@ function enterPaymentScreen() {
   const day = AVAILABILITY[c.dayIndex];
   $('#pay-summary-title').textContent = WORKSHOP.title;
   $('#pay-summary-when').textContent = `${fmtDate(day.date)} · ${c.time} · ${participantsLabel(c.participants)}`;
-  $('#pay-summary-price').textContent = `${(WORKSHOP.pricePerPerson * c.participants).toLocaleString('he-IL')} ₪`;
+  $('#pay-summary-price').textContent = `${workshopPrice(c.participants).toLocaleString('he-IL')} ₪`;
 
   c.holdRemaining = HOLD_TOTAL_SECONDS;
   c.holdExpired = false;
@@ -308,14 +310,17 @@ $('#wa-tamima-restart')?.addEventListener('click', backToHub);
 function renderWaCustomer() {
   const c = state.client;
   const day = AVAILABILITY[c.dayIndex];
+  $('#confirm-title').textContent = WORKSHOP.title;
   $('#confirm-when').textContent = `${fmtDate(day.date)} · ${c.time}`;
-  $('#confirm-price').textContent = `${(WORKSHOP.pricePerPerson * c.participants).toLocaleString('he-IL')} ₪`;
+  $('#confirm-price').textContent = `${workshopPrice(c.participants).toLocaleString('he-IL')} ₪`;
+  const locEl = $('#confirm-location'); if (locEl) locEl.textContent = WORKSHOP.location;
+  const pickupEl = $('#confirm-pickup-note'); if (pickupEl) pickupEl.textContent = WORKSHOP.pickupNote;
   $('#wa-customer-body').innerHTML = `
     <div class="wa-bubble">שלום ${c.leadName.split(' ')[0]}! ההזמנה שלך ל<b>${WORKSHOP.title}</b> אושרה.
       <br>${fmtDate(day.date)} בשעה ${c.time} · ${participantsLabel(c.participants)}.
       <br>מצורפות החשבונית והקבלה שלך. מתרגשים לראות אותך בסטודיו!
       <span class="wa-time">${c.time}</span></div>
-    <div class="wa-bubble"><i class="ti ti-paperclip"></i> חשבונית + קבלה #${8800 + Math.floor(Math.random() * 90)} — ${(WORKSHOP.pricePerPerson * c.participants).toLocaleString('he-IL')} ₪
+    <div class="wa-bubble"><i class="ti ti-paperclip"></i> חשבונית + קבלה #${8800 + Math.floor(Math.random() * 90)} — ${workshopPrice(c.participants).toLocaleString('he-IL')} ₪
       <span class="wa-time">עכשיו</span></div>`;
 }
 function renderWaTamima() {
@@ -592,6 +597,7 @@ function renderAdminWorkshops() {
         <span class="data-row-title">${w.name}</span>
         <span class="data-row-sub">${fmtDate(w.date)} · ${w.time} · ${participantsLabel(w.participants)} · ${w.source}</span>
       </span>
+      <span class="data-row-meta ltr-nums" style="font-weight:600;">${w.amount.toLocaleString('he-IL')} ₪</span>
       <span class="tag ${r.cls}"><i class="ti ${r.icon}"></i> ${r.text}</span>
     </div>`;
   }).join('');
@@ -648,9 +654,8 @@ function showReceiptCalc() {
   const w = state.adminWorkshops.find(x => x.id === state.adminSelectedReceipt);
   if (!w) return;
   $('#receipt-calc').style.display = 'block';
-  $('#calc-participants').textContent = w.participants;
-  $('#calc-price-each').textContent = `${FIXED_WORKSHOP_PRICE} ₪`;
-  $('#calc-total').textContent = `${(FIXED_WORKSHOP_PRICE * w.participants).toLocaleString('he-IL')} ₪`;
+  $('#calc-participants').textContent = participantsLabel(w.participants);
+  $('#calc-total').textContent = `${workshopPrice(w.participants).toLocaleString('he-IL')} ₪`;
 }
 
 $('#receipt-generate-btn')?.addEventListener('click', () => {
