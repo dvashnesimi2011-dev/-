@@ -12,6 +12,10 @@
    2. ריחוף שכבות הרקע — spring loop אמיתי במקום ease-in-out ליניארי
    3. סימן ✓ בהצלחה — ציור SVG אמיתי (stroke draw-on) במקום גופן אייקון
    4. משוב לחיצה — spring אחיד על כל משטח לחיץ באתר
+   5. מעבר בין 3 האפליקציות (וחזרה ל-Hub) — fade+scale אמיתי במקום קפיצה
+   6. גרירה-לסגירה על ה-bottom sheet של המשבצת החלופית
+   7. ספירת מספרים ב-spring אמיתי (KPI) במקום ה-easeOutCubic הידני
+   8. רגע מעבר עדין כשמחליפים יום בבורר התאריך
    ========================================================================== */
 
 (async () => {
@@ -27,6 +31,15 @@
   const SPRING = { type: 'spring', stiffness: 260, damping: 26, mass: 0.9 };
   const SPRING_PRESS = { type: 'spring', stiffness: 520, damping: 32 };
   const EASE = [0.22, 1, 0.36, 1];
+
+  /* לעולם לא לתלות פעולת ניווט/מצב אמיתית בסיום אנימציה בלבד — אם ההבטחה
+     לא מתיישבת (מכשיר איטי, אנימציה שנקטעת, טאב לא פעיל) הממשק לא יתקע. */
+  function settleWithin(promiseLike, ms) {
+    return Promise.race([
+      Promise.resolve(promiseLike).catch(() => {}),
+      new Promise(resolve => setTimeout(resolve, ms)),
+    ]);
+  }
 
   /* -------------------------------------------------------------------- */
   /* 1. מעברי מסך — רק בזרימות הנייד הליניאריות (לקוח/סטודנט).            */
@@ -104,4 +117,104 @@
   };
   document.addEventListener('pointerup', release);
   document.addEventListener('pointercancel', release);
+
+  /* -------------------------------------------------------------------- */
+  /* 5. מעבר בין Hub לבין 3 האפליקציות — fade+scale אמיתי, לא קפיצה       */
+  /* -------------------------------------------------------------------- */
+  if (typeof window.openApp === 'function' && typeof window.backToHub === 'function') {
+    const baseOpenApp = window.openApp;
+    const baseBackToHub = window.backToHub;
+
+    function crossFade(outEl, showFn) {
+      const finish = () => {
+        showFn();
+        const inEl = document.querySelector('.app-wrap.active') ||
+          (document.getElementById('hub').style.display !== 'none' ? document.getElementById('hub') : null);
+        if (inEl) animate(inEl, { opacity: [0, 1], scale: [0.985, 1] }, { duration: 0.42, ease: EASE });
+      };
+      if (outEl) {
+        const anim = animate(outEl, { opacity: [1, 0], scale: [1, 0.985] }, { duration: 0.26, ease: EASE });
+        settleWithin(anim.finished, 350).then(finish);
+      } else {
+        finish();
+      }
+    }
+
+    window.openApp = function (appId) {
+      const hub = document.getElementById('hub');
+      const hubVisible = hub && hub.style.display !== 'none';
+      crossFade(hubVisible ? hub : null, () => baseOpenApp(appId));
+    };
+    window.backToHub = function () {
+      const active = document.querySelector('.app-wrap.active');
+      crossFade(active, () => baseBackToHub());
+    };
+  }
+
+  /* -------------------------------------------------------------------- */
+  /* 6. גרירה-לסגירה על ידית ה-bottom sheet (בורר משבצת חלופית)           */
+  /* -------------------------------------------------------------------- */
+  const sheet = document.getElementById('slot-picker-overlay')?.querySelector('.sheet');
+  const handle = sheet?.querySelector('.sheet-handle');
+  const overlay = document.getElementById('slot-picker-overlay');
+  if (sheet && handle && overlay) {
+    let startY = 0, dragY = 0, dragging = false;
+    const DISMISS_AT = 90;
+
+    handle.style.touchAction = 'none';
+    handle.addEventListener('pointerdown', e => {
+      dragging = true;
+      startY = e.clientY;
+      handle.setPointerCapture?.(e.pointerId);
+    });
+    handle.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      dragY = Math.max(0, e.clientY - startY);
+      sheet.style.transform = `translateY(${dragY}px)`;
+      overlay.style.opacity = String(1 - Math.min(dragY / 300, 0.6));
+    });
+    const endDrag = () => {
+      if (!dragging) return;
+      dragging = false;
+      overlay.style.opacity = '';
+      if (dragY > DISMISS_AT && typeof window.closeSlotPicker === 'function') {
+        animate(sheet, { y: [dragY, 400] }, { duration: 0.22, ease: EASE });
+        const fade = animate(overlay, { opacity: [1 - Math.min(dragY / 300, 0.6), 0] }, { duration: 0.22 });
+        settleWithin(fade.finished, 300).then(() => { window.closeSlotPicker(); sheet.style.transform = ''; });
+      } else {
+        const back = animate(sheet, { y: [dragY, 0] }, SPRING);
+        settleWithin(back.finished, 400).then(() => { sheet.style.transform = ''; });
+      }
+      dragY = 0;
+    };
+    handle.addEventListener('pointerup', endDrag);
+    handle.addEventListener('pointercancel', endDrag);
+  }
+
+  /* -------------------------------------------------------------------- */
+  /* 7. ספירת מספרים ב-spring אמיתי (KPI) — מחליף easeOutCubic ידני       */
+  /* -------------------------------------------------------------------- */
+  if (typeof window.countUp === 'function') {
+    window.countUp = function (el, target, opts = {}) {
+      const prefix = opts.prefix || '';
+      const suffix = opts.suffix || '';
+      animate(0, target, {
+        type: 'spring', stiffness: 90, damping: 22, mass: 1,
+        onUpdate: latest => {
+          el.textContent = prefix + Math.round(latest).toLocaleString('he-IL') + suffix;
+        },
+      });
+    };
+  }
+
+  /* -------------------------------------------------------------------- */
+  /* 8. רגע מעבר עדין כשמחליפים יום בבורר התאריך                          */
+  /* -------------------------------------------------------------------- */
+  document.addEventListener('click', e => {
+    if (!e.target.closest('[data-day]')) return;
+    requestAnimationFrame(() => {
+      const wrap = document.getElementById('slots-wrap');
+      if (wrap) animate(wrap, { opacity: [0, 1], y: [10, 0] }, { duration: 0.32, ease: EASE });
+    });
+  });
 })();

@@ -111,7 +111,7 @@ function setStudentNavActive(screenId) {
 function onScreenEnter(appId, screenId) {
   if (appId === 'admin') setAdminNavActive(screenId);
   if (appId === 'student' && ['s1', 's2', 's6'].includes(screenId)) setStudentNavActive(screenId);
-  if (appId === 'admin' && screenId === 'a-dashboard') animateKpis();
+  if (appId === 'admin' && screenId === 'a-dashboard') { animateKpis(); renderAdminHome(); }
   if (appId === 'client' && screenId === 'c2') renderAvailability();
   if (appId === 'client' && screenId === 'c3') enterPaymentScreen();
   if (appId === 'client' && (screenId === 'c4' || screenId === 'c5')) renderWaCustomer();
@@ -313,9 +313,9 @@ function renderWaCustomer() {
   $('#wa-customer-body').innerHTML = `
     <div class="wa-bubble">שלום ${c.leadName.split(' ')[0]}! ההזמנה שלך ל<b>${WORKSHOP.title}</b> אושרה.
       <br>${fmtDate(day.date)} בשעה ${c.time} · ${participantsLabel(c.participants)}.
-      <br>מצורפת הקבלה שלך. מתרגשים לראות אותך בסטודיו!
+      <br>מצורפות החשבונית והקבלה שלך. מתרגשים לראות אותך בסטודיו!
       <span class="wa-time">${c.time}</span></div>
-    <div class="wa-bubble"><i class="ti ti-paperclip"></i> קבלה #${8800 + Math.floor(Math.random() * 90)} — ${(WORKSHOP.pricePerPerson * c.participants).toLocaleString('he-IL')} ₪
+    <div class="wa-bubble"><i class="ti ti-paperclip"></i> חשבונית + קבלה #${8800 + Math.floor(Math.random() * 90)} — ${(WORKSHOP.pricePerPerson * c.participants).toLocaleString('he-IL')} ₪
       <span class="wa-time">עכשיו</span></div>`;
 }
 function renderWaTamima() {
@@ -516,13 +516,29 @@ function animateKpis() {
   countUp($('#kpi-capacity'), ADMIN_KPI.studioCapacityToday.used, { suffix: ` / ${ADMIN_KPI.studioCapacityToday.total}` });
 }
 
-(function renderAdminHome() {
-  const pendingHtml = ADMIN_PENDING.map(p => `
+/* "ממתין לך עכשיו" נגזר בזמן אמת מ-ADMIN_STUDENTS ומ-state.adminWorkshops —
+   לא מרשימה נפרדת שיכולה להתפצל מהמקור (למשל: לשכוח לקוח שממתין לתשלום,
+   או להמשיך להציג סדנה שכבר הופקה לה קבלה). */
+function getPendingActions() {
+  const payments = ADMIN_STUDENTS.filter(s => s.urgent).map(s => ({
+    type: 'payment', label: 'ממתין/ה לתשלום — בלוק שיעורים', name: s.name, when: '', urgent: true,
+  }));
+  const receipts = state.adminWorkshops.filter(w => w.receipt === 'manual').map(w => {
+    const diff = daysBetween(w.date, TODAY);
+    const when = diff === 0 ? `היום, ${w.time}` : diff === -1 ? `אתמול, ${w.time}` :
+      diff < -1 ? `לפני ${-diff} ימים` : `${fmtDate(w.date)}, ${w.time}`;
+    return { type: 'receipt', label: 'להפיק קבלה ידנית — סדנת בסלון', name: w.name, when, urgent: diff <= -1 };
+  });
+  return [...payments, ...receipts];
+}
+
+function renderAdminHome() {
+  const pendingHtml = getPendingActions().map(p => `
       <div class="data-row">
         <span class="data-avatar"><i class="ti ${p.type === 'receipt' ? 'ti-receipt' : 'ti-credit-card'}"></i></span>
         <span class="data-row-body">
           <span class="data-row-title">${p.label}</span>
-          <span class="data-row-sub">${p.name} · ${p.when}</span>
+          <span class="data-row-sub">${p.name}${p.when ? ' · ' + p.when : ''}</span>
         </span>
         ${p.urgent ? '<span class="tag tag-warning">דחוף</span>' : ''}
       </div>`).join('');
@@ -549,7 +565,8 @@ function animateKpis() {
         <span class="data-row-body"><span class="data-row-title">${t.name}</span></span>
       </div>`).join('');
   }
-})();
+}
+renderAdminHome();
 
 /* -------------------------------------------------------------------------- */
 /* ADMIN — Workshops management                                              */
@@ -647,7 +664,7 @@ $('#receipt-generate-btn')?.addEventListener('click', () => {
     state.adminSelectedReceipt = null;
     $('#receipt-calc').style.display = 'none';
     renderReceiptPicker();
-    showToast('admin', 'הקבלה הופקה ונשלחה ללקוח', 'ti-check');
+    showToast('admin', 'החשבונית והקבלה הופקו ונשלחו ללקוח', 'ti-check');
   }, 800);
 });
 

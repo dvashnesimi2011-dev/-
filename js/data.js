@@ -16,6 +16,11 @@ function fmtDate(d) {
 function fmtDateShort(d) {
   return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
 }
+function daysBetween(a, b) {
+  const da = new Date(a.getFullYear(), a.getMonth(), a.getDate());
+  const db = new Date(b.getFullYear(), b.getMonth(), b.getDate());
+  return Math.round((db - da) / 86400000);
+}
 
 const TODAY = new Date();
 
@@ -95,15 +100,13 @@ const ADMIN_KPI = {
   monthRevenue: 18450,
   activeStudents: 15,
   workshopsThisMonth: 12,
-  studioCapacityToday: { used: 4, total: 12 },
+  studioCapacityToday: { used: 4, total: 6 }, // 6 אובניים בסך הכל בסטודיו (ראו קובץ 00) — לא 12
   marketingCost: null, // placeholder — טרם נבנה דוח מפורט (ראו קובץ 04)
 };
 
-const ADMIN_PENDING = [
-  { type: 'receipt', label: 'להפיק קבלה ידנית — סדנת בסלון', name: 'משפחת אברג׳יל', when: 'אתמול, 18:00', urgent: true },
-  { type: 'payment', label: 'ממתינה לתשלום — בלוק שיעורים', name: 'שירה לוי', when: 'לפני 3 ימים', urgent: true },
-  { type: 'receipt', label: 'להפיק קבלה ידנית — סדנת בסלון', name: 'רועי ודנה', when: 'היום, 09:20', urgent: false },
-];
+/* אין כאן רשימת "ממתין לך עכשיו" נפרדת בכוונה — היא נגזרת ב-app.js מתוך
+   ADMIN_STUDENTS ו-state.adminWorkshops, כדי שלא תוכל להתפצל מהמקור האמיתי
+   (זה בדיוק המקום שבו נתונים כפולים "נשברים" כשמחברים באק-אנד אמיתי). */
 
 const ADMIN_TODAY = [
   { time: '10:00', name: 'קבוצת גן ילדים — יום הולדת', kind: 'סדנה', participants: 6 },
@@ -139,5 +142,6 @@ const ADMIN_STUDENTS = [
   { name: 'הדר וייס', status: 'שולם', urgent: false, lessons: '3/4', absences: 0, phone: '054-1230000' },
 ];
 
-/* מחיר קבוע לחישוב קבלה ידנית (עדכני — מסך עדכון מחיר טרם קיים, ראו קובץ 02) */
-const FIXED_WORKSHOP_PRICE = 220;
+/* מחיר קבוע לחישוב קבלה ידנית — נגזר מ-WORKSHOP.pricePerPerson כדי שלא יוכל
+   להתפצל ממנו (מסך עדכון מחיר נפרד טרם קיים, ראו קובץ 02) */
+const FIXED_WORKSHOP_PRICE = WORKSHOP.pricePerPerson;
