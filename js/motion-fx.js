@@ -125,8 +125,16 @@
     const baseOpenApp = window.openApp;
     const baseBackToHub = window.backToHub;
 
+    /* טוקן-ביטול: אם נלחץ ניווט נוסף לפני שהמעבר הקודם השלים, השלמה
+       "מיושנת" שמגיעה באיחור לא תדרוס מצב שכבר החליף אותה (ראו
+       cancellable-state-transitions — בלי זה, לחיצה מהירה כפולה שוברת
+       את הניווט). */
+    let transitionToken = 0;
+
     function crossFade(outEl, showFn) {
+      const myToken = ++transitionToken;
       const finish = () => {
+        if (myToken !== transitionToken) return; // מעבר חדש יותר כבר קרה — מתעלמים
         showFn();
         const inEl = document.querySelector('.app-wrap.active') ||
           (document.getElementById('hub').style.display !== 'none' ? document.getElementById('hub') : null);
