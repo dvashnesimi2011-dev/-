@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>הסטודיו של תמימה — דמו אינטראקטיבי</title>
+<link rel="stylesheet" href="css/styles.css?v=10">
+</head>
+<body>
+
+<!-- ==========================================================================
+     HUB — מסך בחירת זרימה
+     ========================================================================== -->
+<div id="hub" class="hub grain">
+  <div class="strata" data-strata="ink"></div>
+
+  <div class="hub-inner">
+    <div class="hub-lede">
+      <p class="hub-kicker">דמו אינטראקטיבי לפרויקט הגמר של סטודיו קרמיקה. פרונט-אנד בלבד — כל הנתונים מדומים.</p>
+      <h1 class="hub-title serif">הסטודיו<br>של תמימה</h1>
+      <p class="hub-sub">שלוש חוויות מוצר סביב אותו גלגל אחד: מי שמזמין/ה סדנה, מי שמנהלת אותה, ומי שלומד/ת בה.</p>
+    </div>
+
+    <div class="hub-list">
+      <button class="hub-row" data-open="client">
+        <span class="hub-row-name serif">לקוח/ה</span>
+        <span class="hub-row-fact">הזמנת סדנה — שעה אובניים ושעה עבודת יד, עד 6 משתתפים, עם נעילת משבצת בתשלום ואישור אוטומטי בוואטסאפ.</span>
+        <span class="hub-row-arrow"><i class="ti ti-arrow-left"></i></span>
+      </button>
+      <button class="hub-row" data-open="admin">
+        <span class="hub-row-name serif">תמימה</span>
+        <span class="hub-row-fact">ניהול הסטודיו — 6 אובניים, כל הסדנאות והשיעורים והקבלות במקום אחד, בלי אישור ידני על כל פרט.</span>
+        <span class="hub-row-arrow"><i class="ti ti-arrow-left"></i></span>
+      </button>
+      <button class="hub-row" data-open="student">
+        <span class="hub-row-name serif">סטודנט/ית</span>
+        <span class="hub-row-fact">בלוק של 4 שיעורים שמתחדש כל 28 יום — מעקב היעדרויות, ביטול לפי מדיניות ברורה, וקביעת השלמה.</span>
+        <span class="hub-row-arrow"><i class="ti ti-arrow-left"></i></span>
+      </button>
+    </div>
+  </div>
+
+  <p class="hub-footer-note">בלי שרת, בלי API, בלי שמירה אמיתית — כל מה שבפנים מדומה כדי להראות איך הזרימה מרגישה.</p>
+</div>
+
+<!-- ==========================================================================
+     APP · לקוח — הזמנת סדנה
+     ========================================================================== -->
+<div id="app-client" class="app-wrap">
+  <div class="phone-stage grain">
+    <div class="strata" data-strata="clay"></div>
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-screens">
+
+        <!-- c1 — בחירת סוג פעילות -->
+        <section class="screen" data-screen="c1">
+          <div class="topbar">
+            <button class="icon-btn" data-exit aria-label="סגירה"><i class="ti ti-x"></i></button>
+            <h1 class="serif">מה תרצו להזמין?</h1>
+            <span style="width:40px"></span>
+          </div>
+          <div class="screen-body">
+            <div class="card" style="margin-bottom:20px;display:flex;gap:12px;align-items:center;background:var(--c-surface-alt);">
+              <span class="select-row-icon" style="background:#25D366;color:#fff;flex-shrink:0;"><i class="ti ti-brand-whatsapp"></i></span>
+              <div>
+                <div style="font-weight:700;font-size:14.5px;">שלום <span id="lead-name"></span></div>
+                <div style="font-size:12.5px;color:var(--c-text-soft);">ראינו שפנית אלינו בוואטסאפ — הפרטים שלך כבר שמורים</div>
+              </div>
+            </div>
+            <div class="stagger-in" style="display:flex;flex-direction:column;gap:12px;">
+              <button class="select-row" data-activity="workshop">
+                <span class="select-row-icon"><i class="ti ti-flower"></i></span>
+                <span class="select-row-body"><span class="select-row-title">סדנה חד״פ</span><span class="select-row-sub">לזוגות ולקבוצות · 2 שעות</span></span>
+                <span class="select-row-check" style="border:none;"><i class="ti ti-chevron-left"></i></span>
+              </button>
+              <button class="select-row" data-activity="course">
+                <span class="select-row-icon"><i class="ti ti-calendar-repeat"></i></span>
+                <span class="select-row-body"><span class="select-row-title">קורס שיעורים</span><span class="select-row-sub">בלוק של 4 שיעורים, מתחדש</span></span>
+                <span class="select-row-check" style="border:none;"><i class="ti ti-chevron-left"></i></span>
+              </button>
+              <button class="select-row" data-activity="pottery">
+                <span class="select-row-icon"><i class="ti ti-cup"></i></span>
+                <span class="select-row-body"><span class="select-row-title">כלי קרמיקה</span><span class="select-row-sub">רכישת כלים מהסטודיו</span></span>
+                <span class="select-row-check" style="border:none;"><i class="ti ti-chevron-left"></i></span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- c2 — בחירת סדנה ותאריך -->
+        <section class="screen" data-screen="c2">
+          <div class="photo-bleed p-hands-press">
+            <button class="icon-btn photo-bleed-back" data-back="client" aria-label="חזרה"><i class="ti ti-chevron-right"></i></button>
+            <div class="hero-caption">
+              <h2 class="serif">שעה אובניים,<br>שעה עבודת יד</h2>
+            </div>
+          </div>
+          <div class="screen-body no-pad-top sheet-rise">
+            <div class="stepper" style="margin-bottom:20px;">
+              <div>
+                <div class="stepper-label">מספר משתתפים</div>
+                <div class="stepper-hint">עד 6 משתתפים במשבצת</div>
+              </div>
+              <div class="stepper-controls">
+                <button class="stepper-btn" id="stepper-minus" aria-label="הפחתה"><i class="ti ti-minus"></i></button>
+                <span class="stepper-value" id="participants-value">2</span>
+                <button class="stepper-btn" id="stepper-plus" aria-label="הוספה"><i class="ti ti-plus"></i></button>
+              </div>
+            </div>
+
+            <div class="section-title" style="margin-top:0;">בחרו יום</div>
+            <div class="chip-row" id="day-chip-row"></div>
+
+            <div class="section-title">שעות פנויות</div>
+            <div id="slots-wrap"></div>
+
+            <hr class="divider">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+              <span style="color:var(--c-text-soft);font-size:14px;">סה״כ לתשלום</span>
+              <span id="summary-price" class="ltr-nums" style="font-weight:700;font-size:20px;"></span>
+            </div>
+            <button class="btn btn-primary btn-block" id="to-payment-btn" disabled>המשך לתשלום</button>
+          </div>
+        </section>
+
+        <!-- c3 — תשלום ואישור -->
+        <section class="screen" data-screen="c3">
+          <div class="topbar">
+            <button class="icon-btn" id="c3-back-btn" aria-label="חזרה"><i class="ti ti-chevron-right"></i></button>
+            <h1 class="serif">תשלום ואישור</h1>
+            <span style="width:40px"></span>
+          </div>
+          <div class="screen-body no-pad-top">
+            <div id="hold-banner" class="hold-banner"></div>
+            <div class="card">
+              <div class="select-row-title" id="pay-summary-title" style="font-size:17px;margin-bottom:4px;"></div>
+              <div class="select-row-sub" id="pay-summary-when" style="margin-bottom:14px;"></div>
+              <hr class="divider" style="margin:14px 0;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="color:var(--c-text-soft);font-size:14px;">סה״כ לתשלום</span>
+                <span id="pay-summary-price" class="ltr-nums" style="font-weight:700;font-size:22px;"></span>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-block" id="pay-btn" style="margin-top:20px;">מעבר לתשלום מאובטח</button>
+            <p style="text-align:center;font-size:12px;color:var(--c-text-faint);margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px;">
+              <i class="ti ti-shield-lock"></i> תשלום מאובטח, מופעל ע״י Summit
+            </p>
+          </div>
+        </section>
+
+        <!-- c4 — אישור הזמנה (רשת ביטחון) -->
+        <section class="screen" data-screen="c4">
+          <div class="screen-body">
+            <div class="success-panel">
+              <div class="success-icon">
+                <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path class="success-check-path" d="M4 12.5l5 5L20 6.5"/></svg>
+              </div>
+              <h2 class="success-title serif">ההזמנה אושרה!</h2>
+              <p class="success-sub">מסך זה יישאר כאן תמיד, גם אם הודעת הוואטסאפ מתעכבת בדרך אליך.</p>
+              <div class="card" style="text-align:right;margin-bottom:24px;">
+                <div class="select-row-sub" style="margin-bottom:6px;">סדנת קרמיקה על האובניים</div>
+                <div class="select-row-title" id="confirm-when" style="margin-bottom:10px;"></div>
+                <hr class="divider" style="margin:10px 0;">
+                <div style="display:flex;justify-content:space-between;">
+                  <span style="color:var(--c-text-soft);font-size:14px;">שולם</span>
+                  <span id="confirm-price" style="font-weight:700;"></span>
+                </div>
+              </div>
+              <button class="btn btn-primary btn-block" id="confirm-to-wa-customer">הצגת הודעת האישור</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- c5 — הודעת וואטסאפ ללקוח -->
+        <section class="screen" data-screen="c5">
+          <div class="topbar">
+            <h1 class="serif" style="flex:1;">הודעה אוטומטית ללקוח/ה</h1>
+          </div>
+          <div class="screen-body no-pad-top">
+            <div class="wa-phone">
+              <div class="wa-header">
+                <span class="wa-avatar"><i class="ti ti-flower"></i></span>
+                <div><div class="wa-name">הסטודיו של תמימה</div><div class="wa-status">עסק מאומת</div></div>
+              </div>
+              <div id="wa-customer-body"></div>
+            </div>
+            <button class="btn btn-primary btn-block" id="wa-customer-next" style="margin-top:20px;">הבא: הודעה לתמימה</button>
+          </div>
+        </section>
+
+        <!-- c6 — הודעת וואטסאפ לתמימה -->
+        <section class="screen" data-screen="c6">
+          <div class="topbar">
+            <h1 class="serif" style="flex:1;">הודעה אוטומטית לתמימה</h1>
+          </div>
+          <div class="screen-body no-pad-top">
+            <div class="wa-phone">
+              <div class="wa-header">
+                <span class="wa-avatar"><i class="ti ti-user"></i></span>
+                <div><div class="wa-name">תמימה</div><div class="wa-status">בעלת הסטודיו</div></div>
+              </div>
+              <div id="wa-tamima-body"></div>
+            </div>
+            <p style="text-align:center;color:var(--c-text-soft);font-size:13.5px;margin:20px 0;">סיימתם לסייר בזרימת הזמנת הסדנה.</p>
+            <button class="btn btn-ghost btn-block" id="wa-tamima-restart">חזרה למסך הראשי</button>
+          </div>
+        </section>
+
+      </div><!-- /.phone-screens -->
+
+      <div class="sheet-overlay" id="slot-picker-overlay">
+        <div class="sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title serif">בחרו מועד חלופי</div>
+          <p class="sheet-sub">המשבצת שבחרתם כבר לא זמינה. הנה הזמנים הקרובים הפנויים לאותה סדנה — הפרטים שמילאתם נשמרו, לא תצטרכו למלא שוב.</p>
+          <div id="slot-picker-list"></div>
+        </div>
+      </div>
+      <div class="toast" id="toast-client"></div>
+    </div><!-- /.phone-frame -->
+  </div><!-- /.phone-stage -->
+</div>
+
+<!-- ==========================================================================
+     APP · תמימה — ניהול
+     ========================================================================== -->
+<div id="app-admin" class="app-wrap">
+  <div class="desktop-stage grain">
+    <div class="strata" data-strata="quiet"></div>
+    <div class="desktop-toolbar">
+      <button class="exit-btn" data-exit><i class="ti ti-arrow-right"></i><span>חזרה לדף הבחירה</span></button>
+      <button class="view-toggle" id="admin-view-toggle"><i class="ti ti-device-mobile"></i><span>תצוגת נייד</span></button>
+    </div>
+
+    <div class="desktop-frame admin-scope" id="admin-frame">
+      <aside class="admin-sidebar">
+        <div class="admin-logo serif">הסטודיו של תמימה</div>
+        <button class="admin-nav-item" data-nav="a-dashboard"><i class="ti ti-layout-dashboard"></i> בית</button>
+        <button class="admin-nav-item" data-nav="a-workshops"><i class="ti ti-flower"></i> סדנאות</button>
+        <button class="admin-nav-item" data-nav="a-students"><i class="ti ti-users"></i> שיעורים</button>
+        <button class="admin-nav-item" data-nav="a-receipt"><i class="ti ti-receipt"></i> קבלה ידנית</button>
+        <div class="admin-nav-spacer"></div>
+        <button class="admin-nav-item" data-nav="a-more"><i class="ti ti-dots-circle-horizontal"></i> עוד</button>
+      </aside>
+
+      <div class="admin-main">
+        <div class="admin-topbar">
+          <div>
+            <h1>בוקר טוב, תמימה</h1>
+            <div class="sub">הנה מה שקורה בסטודיו היום</div>
+          </div>
+          <span class="data-avatar" style="width:42px;height:42px;font-size:16px;">ת</span>
+        </div>
+
+        <div class="admin-body">
+
+          <!-- a-dashboard -->
+          <section class="screen" data-screen="a-dashboard" style="flex-direction:column;">
+            <div class="mobile-only">
+              <div class="needs-attention-badge"><i class="ti ti-bell"></i> יש לך 3 פעולות ממתינות</div>
+              <div class="section-title" style="margin-top:0;">ממתין לך עכשיו</div>
+              <div class="card" style="padding:0;"><div id="admin-pending-list-m"></div></div>
+              <div class="section-title">היום</div>
+              <div class="card" style="padding:0;"><div id="admin-today-compact"></div></div>
+            </div>
+            <div class="desktop-only">
+              <div class="kpi-grid">
+                <div class="kpi-card"><div class="kpi-label"><i class="ti ti-coin"></i> הכנסות החודש</div><div class="kpi-value" id="kpi-revenue">0 ₪</div><div class="kpi-delta up"><i class="ti ti-trending-up"></i> +12% מהחודש הקודם</div></div>
+                <div class="kpi-card"><div class="kpi-label"><i class="ti ti-users"></i> סטודנטים פעילים</div><div class="kpi-value" id="kpi-students">0</div></div>
+                <div class="kpi-card"><div class="kpi-label"><i class="ti ti-flower"></i> סדנאות החודש</div><div class="kpi-value" id="kpi-workshops">0</div></div>
+                <div class="kpi-card"><div class="kpi-label"><i class="ti ti-armchair"></i> תפוסת אובניים היום</div><div class="kpi-value" id="kpi-capacity">0</div></div>
+                <div class="kpi-card"><div class="kpi-label"><i class="ti ti-speakerphone"></i> עלות שיווק לליד</div><div class="kpi-value placeholder">₪ —</div><div class="kpi-delta" style="color:var(--a-text-faint);">דוח מפורט טרם נבנה</div></div>
+              </div>
+              <div class="section-title">ממתין לך עכשיו</div>
+              <div class="card" style="padding:0;"><div id="admin-pending-list"></div></div>
+              <div class="section-title">היום</div>
+              <div class="card" style="padding:0;"><div id="admin-today-detail"></div></div>
+            </div>
+          </section>
+
+          <!-- a-workshops -->
+          <section class="screen" data-screen="a-workshops" style="flex-direction:column;">
+            <div class="section-title" style="margin-top:0;">ניהול סדנאות <span class="count" id="workshops-count"></span></div>
+            <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+              <span class="tag tag-success"><i class="ti ti-bolt"></i> הופקה אוטומטית</span>
+              <span class="tag tag-warning"><i class="ti ti-hand-stop"></i> דורש קבלה ידנית</span>
+              <span class="tag tag-danger"><i class="ti ti-hourglass"></i> ממתין לתשלום</span>
+            </div>
+            <div class="card list-scroll" style="padding:0;max-height:520px;"><div id="admin-workshops-list"></div></div>
+          </section>
+
+          <!-- a-students -->
+          <section class="screen" data-screen="a-students" style="flex-direction:column;">
+            <div class="section-title" style="margin-top:0;">ניהול שיעורים <span class="count" id="admin-students-count"></span></div>
+            <div class="card list-scroll" style="padding:0;max-height:560px;"><div id="admin-students-list"></div></div>
+          </section>
+
+          <!-- a-receipt -->
+          <section class="screen" data-screen="a-receipt" style="flex-direction:column;">
+            <div class="section-title" style="margin-top:0;">יצירת קבלה ידנית</div>
+            <p style="color:var(--a-text-soft);font-size:13.5px;margin-bottom:16px;line-height:1.7;">
+              עבור סדנאות ששולמו דרך בסלון (לא דרך קישור תשלום סאמיט) — הסכום מחושב אוטומטית לפי מחיר קבוע במערכת, ואינו נשלף מבסלון.
+            </p>
+            <div id="receipt-picker-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+            <div class="card" id="receipt-calc" style="display:none;margin-top:20px;max-width:380px;">
+              <div class="card-title">חישוב הסכום</div>
+              <div class="calc-row"><span class="lbl">מספר משתתפים</span><span id="calc-participants"></span></div>
+              <div class="calc-row"><span class="lbl">מחיר קבוע למשתתף</span><span id="calc-price-each"></span></div>
+              <div class="calc-row total"><span class="lbl">סה״כ לקבלה</span><span id="calc-total"></span></div>
+              <button class="btn btn-primary btn-block" id="receipt-generate-btn" style="margin-top:16px;">הפקת קבלה + חשבונית בסאמיט</button>
+            </div>
+          </section>
+
+          <!-- a-more -->
+          <section class="screen" data-screen="a-more" style="flex-direction:column;">
+            <div class="empty-hint">
+              <i class="ti ti-dots-circle-horizontal"></i>
+              <p>תוכן טאב "עוד" טרם הוגדר במסמכי האפיון.<br>ייבנה בסבב עיצוב הבא.</p>
+            </div>
+          </section>
+
+        </div><!-- /.admin-body -->
+
+        <div class="admin-bottom-nav">
+          <button class="nav-btn" data-nav="a-dashboard"><i class="ti ti-layout-dashboard"></i>בית</button>
+          <button class="nav-btn" data-nav="a-workshops"><i class="ti ti-flower"></i>סדנאות</button>
+          <button class="nav-btn" data-nav="a-students"><i class="ti ti-users"></i>שיעורים</button>
+          <button class="nav-btn" data-nav="a-more"><i class="ti ti-dots"></i>עוד</button>
+        </div>
+      </div><!-- /.admin-main -->
+
+      <div class="toast" id="toast-admin"></div>
+    </div><!-- /.desktop-frame -->
+  </div>
+</div>
+
+<!-- ==========================================================================
+     APP · אפליקציית סטודנטים
+     ========================================================================== -->
+<div id="app-student" class="app-wrap">
+  <div class="phone-stage grain">
+    <div class="strata" data-strata="sand"></div>
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-screens">
+
+        <!-- s1 — בית -->
+        <section class="screen" data-screen="s1">
+          <div class="photo-bleed p-wheel-bowl">
+            <button class="icon-btn photo-bleed-back" data-exit aria-label="סגירה"><i class="ti ti-x"></i></button>
+            <div class="hero-caption">
+              <div style="font-size:14px;opacity:0.75;margin-bottom:4px;">שלום, <span id="student-name"></span></div>
+              <h2 class="serif">השיעור הבא: <span id="student-next-date"></span>, <span id="student-next-time"></span></h2>
+            </div>
+          </div>
+          <div class="screen-body no-pad-top sheet-rise">
+            <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div>
+                <div class="stepper-label">היעדרויות החודש</div>
+                <div class="stepper-hint">עד היעדרות מוצדקת אחת בחודש</div>
+              </div>
+              <div style="font-size:20px;font-weight:700;" id="student-absences"></div>
+            </div>
+            <div class="card" style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+              <span class="stepper-label">סטטוס תשלום</span>
+              <span class="tag tag-success" id="student-payment-status"></span>
+            </div>
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;font-size:13.5px;color:var(--c-text-soft);margin-bottom:8px;">
+                <span>התקדמות בבלוק הנוכחי</span>
+                <span><span id="student-pkg-used"></span>/<span id="student-pkg-total"></span></span>
+              </div>
+              <div style="height:8px;background:var(--c-surface-alt);border-radius:999px;overflow:hidden;">
+                <div id="student-pkg-bar" style="height:100%;width:0;background:var(--c-primary);border-radius:999px;transition:width 800ms var(--ease-out);"></div>
+              </div>
+            </div>
+            <button class="btn btn-ghost btn-block" data-cancel-first style="margin-top:20px;"><i class="ti ti-calendar-x"></i> ביטול השיעור הבא</button>
+          </div>
+        </section>
+
+        <!-- s2 — לוח השיעורים שלי -->
+        <section class="screen" data-screen="s2">
+          <div class="topbar"><h1 class="serif" style="flex:1;">לוח השיעורים שלי</h1></div>
+          <div class="screen-body no-pad-top">
+            <div id="lessons-list" class="list-scroll" style="display:flex;flex-direction:column;gap:10px;"></div>
+          </div>
+        </section>
+
+        <!-- s3 — ביטול שיעור -->
+        <section class="screen" data-screen="s3">
+          <div class="topbar">
+            <button class="icon-btn" data-back="student" aria-label="חזרה"><i class="ti ti-chevron-right"></i></button>
+            <h1 class="serif">ביטול שיעור</h1>
+            <span style="width:40px"></span>
+          </div>
+          <div class="screen-body no-pad-top">
+            <div class="card" style="margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+              <span class="select-row-icon"><i class="ti ti-calendar-event"></i></span>
+              <div>
+                <div class="select-row-title" id="cancel-date"></div>
+                <div class="select-row-sub">שעה <span id="cancel-time"></span></div>
+              </div>
+            </div>
+            <div id="cancel-policy-box"></div>
+            <button class="btn btn-primary btn-block" id="cancel-confirm-btn" style="margin-top:20px;">אישור ביטול</button>
+          </div>
+        </section>
+
+        <!-- s3-success — אישור ביטול -->
+        <section class="screen" data-screen="s3-success">
+          <div class="screen-body">
+            <div class="success-panel">
+              <div class="success-icon">
+                <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path class="success-check-path" d="M4 12.5l5 5L20 6.5"/></svg>
+              </div>
+              <h2 class="success-title serif" id="cancel-success-title">הביטול בוצע</h2>
+              <div id="cancel-success-cta" style="display:none;flex-direction:column;align-items:center;gap:14px;">
+                <p class="success-sub" style="margin-bottom:0;" id="cancel-success-validity"></p>
+                <button class="btn btn-primary btn-block" data-goto-makeup>קביעת שיעור השלמה</button>
+              </div>
+              <button class="btn btn-ghost btn-block" data-cancel-done style="margin-top:14px;">חזרה לבית</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- s4 — קביעת שיעור השלמה -->
+        <section class="screen" data-screen="s4">
+          <div class="topbar">
+            <button class="icon-btn" data-back="student" aria-label="חזרה"><i class="ti ti-chevron-right"></i></button>
+            <h1 class="serif">שיעור השלמה</h1>
+            <span style="width:40px"></span>
+          </div>
+          <div class="screen-body no-pad-top">
+            <p style="color:var(--c-text-soft);font-size:13.5px;margin-bottom:16px;line-height:1.7;">מוצגים רק תאריכים פנויים, בתוקף לחודש מיום הביטול.</p>
+            <div id="makeup-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+          </div>
+        </section>
+
+        <!-- s5 — אישור שיעור השלמה -->
+        <section class="screen" data-screen="s5">
+          <div class="screen-body">
+            <div class="success-panel">
+              <div class="success-icon"><i class="ti ti-calendar-check"></i></div>
+              <h2 class="success-title serif">שיעור ההשלמה נקבע!</h2>
+              <p class="success-sub"><span id="makeup-confirm-date"></span> בשעה <span id="makeup-confirm-time"></span></p>
+              <button class="btn btn-primary btn-block" data-makeup-done>סיום</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- s6 — תשלומים -->
+        <section class="screen" data-screen="s6">
+          <div class="topbar"><h1 class="serif" style="flex:1;">תשלומים</h1></div>
+          <div class="screen-body no-pad-top">
+            <div class="card" style="margin-bottom:20px;display:flex;align-items:center;gap:12px;background:var(--c-success-bg);border-color:transparent;">
+              <span class="select-row-icon" style="background:var(--c-success-text);color:#fff;"><i class="ti ti-repeat"></i></span>
+              <div>
+                <div class="select-row-title" style="color:var(--c-success-text);">הוראת קבע פעילה</div>
+                <div class="select-row-sub" style="color:var(--c-success-text);opacity:0.85;">מתחדשת כל 28 יום · 720 ₪</div>
+              </div>
+            </div>
+            <div class="section-title" style="margin-top:0;">היסטוריית תשלומים</div>
+            <div id="payments-list" class="list-scroll" style="display:flex;flex-direction:column;gap:10px;"></div>
+          </div>
+        </section>
+
+      </div><!-- /.phone-screens -->
+
+      <div class="bottom-nav">
+        <button class="nav-btn is-active" data-nav="s1"><i class="ti ti-home"></i>בית</button>
+        <button class="nav-btn" data-nav="s2"><i class="ti ti-calendar"></i>השיעורים שלי</button>
+        <button class="nav-btn" data-nav="s6"><i class="ti ti-receipt"></i>תשלומים</button>
+      </div>
+      <div class="toast" id="toast-student"></div>
+    </div><!-- /.phone-frame -->
+  </div><!-- /.phone-stage -->
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/strata.js"></script>
+<script src="js/app.js"></script>
+<script src="js/motion-fx.js"></script>
+</body>
+</html>
