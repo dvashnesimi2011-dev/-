@@ -129,7 +129,7 @@ function onScreenEnter(appId, screenId) {
 /* -------------------------------------------------------------------------- */
 
 $all('[data-open]').forEach(el => el.addEventListener('click', () => openApp(el.dataset.open)));
-$all('[data-exit]').forEach(el => el.addEventListener('click', backToHub));
+$all('[data-exit]').forEach(el => el.addEventListener('click', () => backToHub()));
 $all('[data-back]').forEach(el => el.addEventListener('click', () => goBack(el.dataset.back)));
 
 /* -------------------------------------------------------------------------- */
@@ -305,7 +305,7 @@ $('#c3-back-btn')?.addEventListener('click', () => { stopHoldTimer(); goBack('cl
 
 $('#confirm-to-wa-customer')?.addEventListener('click', () => goToScreen('client', 'c5', 'forward'));
 $('#wa-customer-next')?.addEventListener('click', () => goToScreen('client', 'c6', 'forward'));
-$('#wa-tamima-restart')?.addEventListener('click', backToHub);
+$('#wa-tamima-restart')?.addEventListener('click', () => backToHub());
 
 function renderWaCustomer() {
   const c = state.client;
