@@ -29,7 +29,7 @@ state.adminWorkshops.forEach(w => (w.date = new Date(w.date)));
     if (left) return;
     left = true;
     curtain.classList.add('is-leaving');
-    setTimeout(() => curtain.remove(), 560);
+    setTimeout(() => curtain.remove(), 680);
   };
   curtain.addEventListener('click', leave);
   curtain.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') leave(); });

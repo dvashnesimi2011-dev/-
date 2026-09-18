@@ -258,10 +258,20 @@ h1, h2, h3, h4, p { margin: 0; }
 }
 
 @media (max-width: 860px) {
-  .hub { padding: var(--sp-16) var(--sp-5) var(--sp-12); align-items: flex-start; }
-  .hub-inner { grid-template-columns: 1fr; padding-top: var(--sp-10); }
-  .hub-row-name { width: auto; margin-left: var(--sp-4); }
-  .hub-footer-note { position: static; margin-top: var(--sp-10); }
+  .hub { padding: var(--sp-12) var(--sp-5) var(--sp-10); align-items: flex-start; }
+  .hub-inner { grid-template-columns: 1fr; padding-top: var(--sp-6); }
+  .hub-kicker { font-size: 13px; margin-bottom: var(--sp-3); }
+  .hub-title { margin-bottom: var(--sp-3); }
+  .hub-sub { font-size: 14.5px; }
+  /* השורה הצפופה של דסקטופ (שם + טקסט ארוך זה-לצד-זה) נסגרת למדי-שורה
+     צרה בנייד ומייצרת גלישה לשבע-שמונה שורות. עם flex-wrap, שם+חץ
+     נשארים על שורה אחת, וה"עובדה" יורדת לשורה משלה ברוחב מלא —
+     נשברת לשתיים-שלוש שורות במקום שבע. */
+  .hub-row { flex-wrap: wrap; row-gap: 4px; padding: var(--sp-5) 0; }
+  .hub-row-name { width: auto; flex: 0 1 auto; margin-left: 0; }
+  .hub-row-arrow { order: 2; margin-right: auto; }
+  .hub-row-fact { flex: 1 1 100%; order: 3; padding-top: 2px; font-size: 13.5px; }
+  .hub-footer-note { position: static; margin-top: var(--sp-8); }
 }
 
 /* ==========================================================================
@@ -298,6 +308,21 @@ h1, h2, h3, h4, p { margin: 0; }
 }
 .phone-screens {
   position: relative; flex: 1; overflow: hidden;
+}
+
+/* מתחת לרוחב מסוים אנחנו כנראה על מכשיר אמיתי — הדמות של "מוקאפ טלפון
+   בתוך הדפדפן" הופכת שם למיותרת (ולפעמים מגוחכת: טלפון מוקטן בתוך טלפון
+   אמיתי, עם המון רקע ריק מסביב). האפליקציה עצמה הופכת למסך המלא, בדיוק
+   כמו שכבר קורה ל-.desktop-frame בצד הניהול. */
+@media (max-width: 860px) {
+  .phone-stage { padding: 0; align-items: stretch; }
+  .phone-frame {
+    max-width: none; width: 100%;
+    height: 100vh; height: 100dvh;
+    border-radius: 0; border: none; box-shadow: none;
+    padding-top: env(safe-area-inset-top, 0px); /* פינוי לחריץ/אי-דינמי אמיתי */
+  }
+  .phone-notch { display: none; }
 }
 
 .desktop-stage {
@@ -948,10 +973,18 @@ h1, h2, h3, h4, p { margin: 0; }
   opacity: 0; transform: translateY(10px);
   animation: curtainTitleIn 640ms var(--ease-out) 380ms forwards;
 }
-.curtain.is-leaving { animation: curtainLeave 520ms var(--ease-out) forwards; }
+/* יציאה בשני שלבים: קודם התוכן (אייקון+כותרת) נעלם במהירות, ורק אז הרקע
+   האטום מתמוסס לבד. אם שניהם היו דוהים ביחד (opacity על ה-curtain כולו),
+   לרגע קצר רואים גם את טקסט הכניסה וגם את ה-Hub שמתחתיו בו-זמנית —
+   "כפל חשיפה" שבמיוחד בנייד (איפה שתוכן ה-Hub תופס את כל המסך) נראה
+   כמו תקלה, לא כמו מעבר קולנועי. */
+.curtain.is-leaving { animation: curtainBgOut 480ms var(--ease-out) 180ms forwards; }
+.curtain.is-leaving .curtain-icon,
+.curtain.is-leaving .curtain-title { animation: curtainContentOut 200ms var(--ease-out) forwards; }
 @keyframes curtainIconIn { to { opacity: 1; transform: scale(1) rotate(0deg); } }
 @keyframes curtainTitleIn { to { opacity: 1; transform: translateY(0); } }
-@keyframes curtainLeave { to { opacity: 0; transform: scale(1.05); } }
+@keyframes curtainContentOut { to { opacity: 0; transform: translateY(-8px); } }
+@keyframes curtainBgOut { to { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
   .curtain { display: none !important; }
 }
