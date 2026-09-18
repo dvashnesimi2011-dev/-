@@ -452,6 +452,23 @@ h1, h2, h3, h4, p { margin: 0; }
 .icon-btn:active { transform: scale(0.94); }
 .icon-btn:hover { box-shadow: var(--shadow-tiny); }
 
+/* טבעת פוקוס עקבית לניווט מקלדת — .btn ו-.select-row כבר קיבלו את זה,
+   אבל כפתורי אייקון, צ׳יפים, סטפר, וניווט האדמין נשארו עם ברירת המחדל
+   הכחולה של הדפדפן שמתנגשת עם הפלטה. currentColor כדי שכל אחד יתאים
+   אוטומטית לצבע ההקשר שלו (לקוח/סטודנט מול צד הניהול). */
+.icon-btn:focus-visible,
+.chip:focus-visible,
+.stepper-btn:focus-visible,
+.admin-nav-item:focus-visible,
+.bottom-nav .nav-btn:focus-visible,
+.admin-bottom-nav .nav-btn:focus-visible,
+.exit-btn:focus-visible,
+.view-toggle:focus-visible,
+.btn-text:focus-visible {
+  outline: 2.5px solid currentColor;
+  outline-offset: 2px;
+}
+
 .step-dots { display: flex; gap: var(--sp-1); justify-content: center; padding-bottom: var(--sp-2); }
 .step-dots span { width: 6px; height: 6px; border-radius: var(--r-full); background: var(--c-border-strong); transition: all var(--dur-base); }
 .step-dots span.active { width: 20px; background: var(--c-primary); }
