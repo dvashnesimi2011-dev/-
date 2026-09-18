@@ -238,6 +238,7 @@ function enterPaymentScreen() {
   $('#pay-summary-title').textContent = WORKSHOP.title;
   $('#pay-summary-when').textContent = `${fmtDate(day.date)} · ${c.time} · ${participantsLabel(c.participants)}`;
   $('#pay-summary-price').textContent = `${workshopPrice(c.participants).toLocaleString('he-IL')} ₪`;
+  $('#pay-cancellation-hours').textContent = WORKSHOP.cancellationHours;
 
   c.holdRemaining = HOLD_TOTAL_SECONDS;
   c.holdExpired = false;
@@ -547,8 +548,11 @@ function animateKpis() {
    לא מרשימה נפרדת שיכולה להתפצל מהמקור (למשל: לשכוח לקוח שממתין לתשלום,
    או להמשיך להציג סדנה שכבר הופקה לה קבלה). */
 function getPendingActions() {
-  const payments = ADMIN_STUDENTS.filter(s => s.urgent).map(s => ({
+  const lessonPayments = ADMIN_STUDENTS.filter(s => s.urgent).map(s => ({
     type: 'payment', label: 'ממתין/ה לתשלום — בלוק שיעורים', name: s.name, when: '', urgent: true,
+  }));
+  const workshopPayments = state.adminWorkshops.filter(w => w.receipt === 'pending').map(w => ({
+    type: 'payment', label: 'ממתין לתשלום — סדנה', name: w.name, when: `${fmtDate(w.date)}, ${w.time}`, urgent: true,
   }));
   const receipts = state.adminWorkshops.filter(w => w.receipt === 'manual').map(w => {
     const diff = daysBetween(w.date, TODAY);
@@ -556,11 +560,22 @@ function getPendingActions() {
       diff < -1 ? `לפני ${-diff} ימים` : `${fmtDate(w.date)}, ${w.time}`;
     return { type: 'receipt', label: 'להפיק קבלה ידנית — סדנת בסלון', name: w.name, when, urgent: diff <= -1 };
   });
-  return [...payments, ...receipts];
+  return [...lessonPayments, ...workshopPayments, ...receipts];
+}
+
+/* לוח "היום" — ממזג את שיעורי-הקבע (ADMIN_TODAY_LESSONS, ראו data.js) עם
+   הסדנאות של היום שנגזרות מ-state.adminWorkshops, כדי שסדנה שמזיזים או
+   מוסיפים לא תצטרך עדכון ידני נוסף ברשימה נפרדת. */
+function getTodaySchedule() {
+  const workshopsToday = state.adminWorkshops
+    .filter(w => daysBetween(TODAY, w.date) === 0)
+    .map(w => ({ time: w.time, name: w.name, kind: 'סדנה', participants: w.participants }));
+  return [...ADMIN_TODAY_LESSONS, ...workshopsToday].sort((a, b) => a.time.localeCompare(b.time));
 }
 
 function renderAdminHome() {
-  const pendingHtml = getPendingActions().map(p => `
+  const actions = getPendingActions();
+  const pendingHtml = actions.map(p => `
       <div class="data-row">
         <span class="data-avatar"><i class="ti ${p.type === 'receipt' ? 'ti-receipt' : 'ti-credit-card'}"></i></span>
         <span class="data-row-body">
@@ -573,9 +588,13 @@ function renderAdminHome() {
   if (pendingWrap) pendingWrap.innerHTML = pendingHtml;
   const pendingWrapM = $('#admin-pending-list-m');
   if (pendingWrapM) pendingWrapM.innerHTML = pendingHtml;
+  const countEl = $('#needs-attention-count');
+  if (countEl) countEl.textContent = actions.length;
+
+  const today = getTodaySchedule();
   const todayDetail = $('#admin-today-detail');
   if (todayDetail) {
-    todayDetail.innerHTML = ADMIN_TODAY.map(t => `
+    todayDetail.innerHTML = today.map(t => `
       <div class="data-row">
         <span class="data-avatar">${t.time}</span>
         <span class="data-row-body">
@@ -586,7 +605,7 @@ function renderAdminHome() {
   }
   const todayCompact = $('#admin-today-compact');
   if (todayCompact) {
-    todayCompact.innerHTML = ADMIN_TODAY.map(t => `
+    todayCompact.innerHTML = today.map(t => `
       <div class="data-row">
         <span class="data-avatar">${t.time}</span>
         <span class="data-row-body"><span class="data-row-title">${t.name}</span></span>
