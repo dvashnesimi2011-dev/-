@@ -32,6 +32,17 @@
   const SPRING_PRESS = { type: 'spring', stiffness: 520, damping: 32 };
   const EASE = [0.22, 1, 0.36, 1];
 
+  /* בקרת ריחוף לפי-במה — ראו סעיף 2. מוגדר כאן כדי שסעיף 5 (מעברים) יוכל
+     לקרוא ל-setActiveDriftScope בלי תלות בסדר ההגדרה. */
+  const driftGroups = new Map(); // scopeEl -> controls[]
+  let activeDriftScope = null;
+  function setActiveDriftScope(scopeEl) {
+    if (!scopeEl || activeDriftScope === scopeEl) return;
+    driftGroups.get(activeDriftScope)?.forEach(c => c.pause());
+    activeDriftScope = scopeEl;
+    driftGroups.get(scopeEl)?.forEach(c => c.play());
+  }
+
   /* לעולם לא לתלות פעולת ניווט/מצב אמיתית בסיום אנימציה בלבד — אם ההבטחה
      לא מתיישבת (מכשיר איטי, אנימציה שנקטעת, טאב לא פעיל) הממשק לא יתקע. */
   function settleWithin(promiseLike, ms) {
@@ -69,7 +80,11 @@
   }
 
   /* -------------------------------------------------------------------- */
-  /* 2. ריחוף שכבות הרקע — spring loop אמיתי במקום ה-CSS keyframes        */
+  /* 2. ריחוף שכבות הרקע — spring loop אמיתי במקום ה-CSS keyframes.        */
+  /*    כל במה (Hub + 3 אפליקציות) מכילה 8 שכבות דוהות-אינסוף; בלי בקרה   */
+  /*    זה 32 אנימציות רצות בו-זמנית תמיד, גם בבמות שמוסתרות לגמרי —      */
+  /*    בזבוז CPU מתמשך שמרגיש כ"לאגיות" במיוחד במכשירים חלשים. רק הבמה   */
+  /*    הפעילה כרגע רצה; היתר מושהות ב-.pause() עד שמנווטים אליהן.        */
   /* -------------------------------------------------------------------- */
   document.querySelectorAll('.strata-drift').forEach(el => {
     const cs = getComputedStyle(el);
@@ -77,10 +92,18 @@
     const dy = parseFloat(cs.getPropertyValue('--dy')) || 0;
     const dur = parseFloat(cs.getPropertyValue('--dur')) || 30;
     el.style.animation = 'none'; // מוסר את ה-CSS, ה-JS לוקח את ההגה מכאן
-    animate(el,
+    const controls = animate(el,
       { x: [0, dx, 0], y: [0, dy, 0] },
       { duration: dur, repeat: Infinity, ease: 'easeInOut' }
     );
+    const scopeEl = el.closest('.hub, .app-wrap');
+    if (!scopeEl) return;
+    if (!driftGroups.has(scopeEl)) driftGroups.set(scopeEl, []);
+    driftGroups.get(scopeEl).push(controls);
+  });
+  driftGroups.forEach((controls, scopeEl) => {
+    if (scopeEl.id === 'hub') { activeDriftScope = scopeEl; return; } // הבמה הגלויה בטעינה
+    controls.forEach(c => c.pause());
   });
 
   /* -------------------------------------------------------------------- */
@@ -157,6 +180,7 @@
         const inEl = document.querySelector('.app-wrap.active') ||
           (document.getElementById('hub').style.display !== 'none' ? document.getElementById('hub') : null);
         if (!inEl) return;
+        setActiveDriftScope(inEl);
         if (origin) {
           const r = inEl.getBoundingClientRect();
           const ox = ((origin.x - r.left) / r.width) * 100;
