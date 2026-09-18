@@ -4,9 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>הסטודיו של תמימה — דמו אינטראקטיבי</title>
-<link rel="stylesheet" href="css/styles.css?v=10">
+<link rel="stylesheet" href="css/styles.css?v=11">
 </head>
 <body>
+
+<!-- ==========================================================================
+     CURTAIN — פתיחה קולנועית (רגע מותג לפני החשיפה ל-Hub)
+     ========================================================================== -->
+<div id="curtain" class="curtain" aria-hidden="true">
+  <i class="curtain-icon ti ti-flower"></i>
+  <h1 class="curtain-title serif">הסטודיו של תמימה</h1>
+</div>
+
+<!-- ==========================================================================
+     כפתור מצב הדגמה מודרכת — גלוי מעל כל האפליקציות
+     ========================================================================== -->
+<button id="guide-toggle" class="guide-toggle" type="button">
+  <i class="ti ti-bulb"></i><span>הדגמה מודרכת</span>
+</button>
 
 <!-- ==========================================================================
      HUB — מסך בחירת זרימה
@@ -376,7 +391,7 @@
               <span class="stepper-label">סטטוס תשלום</span>
               <span class="tag tag-success" id="student-payment-status"></span>
             </div>
-            <div class="card">
+            <div class="card" id="student-pkg-card">
               <div style="display:flex;justify-content:space-between;font-size:13.5px;color:var(--c-text-soft);margin-bottom:8px;">
                 <span>התקדמות בבלוק הנוכחי</span>
                 <span><span id="student-pkg-used"></span>/<span id="student-pkg-total"></span></span>
@@ -489,7 +504,8 @@
 
 <script src="js/data.js?v=3"></script>
 <script src="js/strata.js?v=1"></script>
-<script src="js/app.js?v=4"></script>
-<script src="js/motion-fx.js?v=4"></script>
+<script src="js/app.js?v=5"></script>
+<script src="js/guide.js?v=2"></script>
+<script src="js/motion-fx.js?v=5"></script>
 </body>
 </html>

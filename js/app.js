@@ -17,6 +17,26 @@ const state = {
 state.adminWorkshops.forEach(w => (w.date = new Date(w.date)));
 
 /* -------------------------------------------------------------------------- */
+/* Curtain — רגע מותג קצר לפני החשיפה ל-Hub                                   */
+/* -------------------------------------------------------------------------- */
+(function initCurtain() {
+  const curtain = document.getElementById('curtain');
+  if (!curtain) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { curtain.remove(); return; }
+
+  let left = false;
+  const leave = () => {
+    if (left) return;
+    left = true;
+    curtain.classList.add('is-leaving');
+    setTimeout(() => curtain.remove(), 560);
+  };
+  curtain.addEventListener('click', leave);
+  curtain.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') leave(); });
+  setTimeout(leave, 1350);
+})();
+
+/* -------------------------------------------------------------------------- */
 /* Utils                                                                      */
 /* -------------------------------------------------------------------------- */
 
@@ -128,7 +148,10 @@ function onScreenEnter(appId, screenId) {
 /* HUB                                                                        */
 /* -------------------------------------------------------------------------- */
 
-$all('[data-open]').forEach(el => el.addEventListener('click', () => openApp(el.dataset.open)));
+$all('[data-open]').forEach(el => el.addEventListener('click', e => {
+  window.__lastOpenOrigin = { x: e.clientX, y: e.clientY };
+  openApp(el.dataset.open);
+}));
 $all('[data-exit]').forEach(el => el.addEventListener('click', () => backToHub()));
 $all('[data-back]').forEach(el => el.addEventListener('click', () => goBack(el.dataset.back)));
 

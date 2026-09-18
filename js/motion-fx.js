@@ -131,14 +131,27 @@
        את הניווט). */
     let transitionToken = 0;
 
-    function crossFade(outEl, showFn) {
+    /* origin: נקודת המסך שבה הלקוח לחץ, כדי שהאפליקציה תיפתח "מתוך" האצבע
+       (portal-zoom) במקום להבליח סימטרית מהמרכז — זה מה שנותן לכניסה
+       תחושה של עומק ולא רק fade רגיל. */
+    function crossFade(outEl, showFn, origin) {
       const myToken = ++transitionToken;
       const finish = () => {
         if (myToken !== transitionToken) return; // מעבר חדש יותר כבר קרה — מתעלמים
         showFn();
         const inEl = document.querySelector('.app-wrap.active') ||
           (document.getElementById('hub').style.display !== 'none' ? document.getElementById('hub') : null);
-        if (inEl) animate(inEl, { opacity: [0, 1], scale: [0.985, 1] }, { duration: 0.42, ease: EASE });
+        if (!inEl) return;
+        if (origin) {
+          const r = inEl.getBoundingClientRect();
+          const ox = ((origin.x - r.left) / r.width) * 100;
+          const oy = ((origin.y - r.top) / r.height) * 100;
+          inEl.style.transformOrigin = `${ox}% ${oy}%`;
+          animate(inEl, { opacity: [0, 1], scale: [0.55, 1] }, { duration: 0.52, ease: EASE })
+            .finished.then(() => { inEl.style.transformOrigin = ''; }).catch(() => {});
+        } else {
+          animate(inEl, { opacity: [0, 1], scale: [0.985, 1] }, { duration: 0.42, ease: EASE });
+        }
       };
       if (outEl) {
         const anim = animate(outEl, { opacity: [1, 0], scale: [1, 0.985] }, { duration: 0.26, ease: EASE });
@@ -151,7 +164,9 @@
     window.openApp = function (appId) {
       const hub = document.getElementById('hub');
       const hubVisible = hub && hub.style.display !== 'none';
-      crossFade(hubVisible ? hub : null, () => baseOpenApp(appId));
+      const origin = hubVisible ? window.__lastOpenOrigin : null;
+      crossFade(hubVisible ? hub : null, () => baseOpenApp(appId), origin);
+      window.__lastOpenOrigin = null;
     };
     window.backToHub = function () {
       const active = document.querySelector('.app-wrap.active');
