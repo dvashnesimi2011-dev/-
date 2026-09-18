@@ -177,7 +177,6 @@ $all('[data-activity]').forEach(el => {
 
 function renderAvailability() {
   const c = state.client;
-  $('#lead-name').textContent = c.leadName;
   $('#participants-value').textContent = c.participants;
   const reviewEl = $('#review-badge');
   if (reviewEl) reviewEl.textContent = `${WORKSHOP.reviewRating.toFixed(1)} · ${WORKSHOP.reviewCount} ביקורות`;

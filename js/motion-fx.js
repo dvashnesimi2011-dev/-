@@ -88,14 +88,29 @@
   /*    למסך עם .success-check-path                                       */
   /* -------------------------------------------------------------------- */
   function drawSuccessIcon(scope) {
-    const path = scope.querySelector('.success-check-path');
     const circle = scope.querySelector('.success-icon');
-    if (!path || !circle) return;
-    const len = path.getTotalLength();
-    path.style.strokeDasharray = String(len);
-    path.style.strokeDashoffset = String(len);
+    if (!circle) return;
+    circle.querySelector('.success-ring')?.remove(); // ביקור חוזר במסך — לא מצטבר
+
     animate(circle, { scale: [0.7, 1], opacity: [0, 1] }, SPRING);
-    animate(path, { strokeDashoffset: [len, 0] }, { duration: 0.5, ease: EASE, delay: 0.18 });
+
+    const path = circle.querySelector('.success-check-path');
+    if (path) {
+      const len = path.getTotalLength();
+      path.style.strokeDasharray = String(len);
+      path.style.strokeDashoffset = String(len);
+      animate(path, { strokeDashoffset: [len, 0] }, { duration: 0.5, ease: EASE, delay: 0.18 });
+    }
+
+    // בלוק אור שנפתח כלפי חוץ ברגע שהסימן "נוחת" — עובד גם עבור אייקון-גופן
+    // (למשל שיעור השלמה) וגם עבור ה-checkmark המצויר.
+    const ring = document.createElement('span');
+    ring.className = 'success-ring';
+    circle.appendChild(ring);
+    settleWithin(
+      animate(ring, { scale: [1, 1.9], opacity: [0.55, 0] }, { duration: 0.7, ease: EASE, delay: 0.32 }).finished,
+      1200
+    ).then(() => ring.remove());
   }
   // מסך הצלחה ראשון (c4) עשוי להיות פעיל כבר בטעינה בהדגמות ידניות — נסרוק פעם אחת
   document.querySelectorAll('.screen.is-active').forEach(drawSuccessIcon);
