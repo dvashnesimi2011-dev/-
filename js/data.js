@@ -32,7 +32,7 @@ const WORKSHOP = {
   subtitle: 'עבודת יד ואובניים · כל אחד/ת יוצר/ת שני כלים',
   duration: '2 שעות',
   minParticipants: 2,
-  maxParticipants: 6,
+  maxParticipants: 6, // תקרת ההזמנה העצמאית המקוונת (מחירון בסלון). קבוצות עד 12 קיימות, אך מתואמות ידנית מול תמימה בוואטסאפ/אינסטגרם — ראו קובץ הדיסקברי.
   priceTiers: { 2: 680, 3: 900, 4: 1200, 5: 1500, 6: 1800 },
   cancellationHours: 48,
   reviewCount: 27,
@@ -77,24 +77,27 @@ const CURRENT_STUDENT = {
   absencesThisMonth: 0,
   maxAbsencesPerMonth: 1,
   paymentStatus: 'שולם',
-  nextLesson: { date: addDays(TODAY, 2), time: '18:00', teacher: 'תמימה' },
+  nextLesson: { date: addDays(TODAY, 2), time: '17:30', teacher: 'תמימה' },
   packageProgress: { used: 2, total: 4 },
 };
 
+/* 17:30 — אחד מארבעת המועדים הקבועים של קורס הקרמיקה (ראשון/שני/שלישי ערב
+   17:30–20:00, או שני בבוקר 9:30–12:00). נועה רשומה למסלול הערב. */
 const MY_LESSONS = [
-  { date: addDays(TODAY, 2), time: '18:00', status: 'upcoming' },
-  { date: addDays(TODAY, 9), time: '18:00', status: 'upcoming' },
-  { date: addDays(TODAY, 16), time: '18:00', status: 'upcoming' },
-  { date: addDays(TODAY, -5), time: '18:00', status: 'done' },
-  { date: addDays(TODAY, -12), time: '18:00', status: 'done' },
-  { date: addDays(TODAY, -19), time: '18:00', status: 'missed-late' },
-  { date: addDays(TODAY, -26), time: '18:00', status: 'done' },
+  { date: addDays(TODAY, 2), time: '17:30', status: 'upcoming' },
+  { date: addDays(TODAY, 9), time: '17:30', status: 'upcoming' },
+  { date: addDays(TODAY, 16), time: '17:30', status: 'upcoming' },
+  { date: addDays(TODAY, -5), time: '17:30', status: 'done' },
+  { date: addDays(TODAY, -12), time: '17:30', status: 'done' },
+  { date: addDays(TODAY, -19), time: '17:30', status: 'missed-late' },
+  { date: addDays(TODAY, -26), time: '17:30', status: 'done' },
 ];
 
+/* 800 ₪ למחזור של 4 שיעורים (כולל חומרים ושריפה), תשלום מראש בהעברה בנקאית */
 const MY_PAYMENTS = [
-  { date: addDays(TODAY, -3), amount: 720, method: 'הוראת קבע', status: 'שולם', doc: 'חשבונית + קבלה #4821' },
-  { date: addDays(TODAY, -31), amount: 720, method: 'הוראת קבע', status: 'שולם', doc: 'חשבונית + קבלה #4715' },
-  { date: addDays(TODAY, -59), amount: 720, method: 'כרטיס אשראי', status: 'שולם', doc: 'חשבונית + קבלה #4602' },
+  { date: addDays(TODAY, -3), amount: 800, method: 'הוראת קבע', status: 'שולם', doc: 'חשבונית + קבלה #4821' },
+  { date: addDays(TODAY, -31), amount: 800, method: 'הוראת קבע', status: 'שולם', doc: 'חשבונית + קבלה #4715' },
+  { date: addDays(TODAY, -59), amount: 800, method: 'כרטיס אשראי', status: 'שולם', doc: 'חשבונית + קבלה #4602' },
 ];
 
 /* מועדי השלמה זמינים בחודש התוקף (לביטול עם 24h+ הודעה) */
@@ -110,7 +113,7 @@ function makeupOptions() {
 const ADMIN_KPI = {
   monthRevenue: 18450,
   activeStudents: 15,
-  workshopsThisMonth: 12,
+  workshopsThisMonth: 15, // כ-15 בחודש, גמיש (ראו קובץ הדיסקברי)
   studioCapacityToday: { used: 4, total: 6 }, // 6 אובניים בסך הכל בסטודיו (ראו קובץ 00) — לא 12
   marketingCost: null, // placeholder — טרם נבנה דוח מפורט (ראו קובץ 04)
 };
@@ -120,10 +123,10 @@ const ADMIN_KPI = {
    (זה בדיוק המקום שבו נתונים כפולים "נשברים" כשמחברים באק-אנד אמיתי). */
 
 const ADMIN_TODAY = [
+  { time: '09:30', name: 'שיעור קבוע — עדן שרון', kind: 'שיעור', participants: 1 },
   { time: '10:00', name: 'קבוצת גן ילדים — יום הולדת', kind: 'סדנה', participants: 6 },
-  { time: '16:00', name: 'שיעור קבוע — נועה כהן', kind: 'שיעור', participants: 1 },
+  { time: '17:30', name: 'שיעור קבוע — נועה כהן', kind: 'שיעור', participants: 1 },
   { time: '18:30', name: 'זוג — יובל ומאיה', kind: 'סדנה', participants: 2 },
-  { time: '20:30', name: 'שיעור קבוע — עדן שרון', kind: 'שיעור', participants: 1 },
 ];
 
 /* amount לכל סדנה מחושב ממחירון הקבוצה האמיתי (workshopPrice), לא מלינארי */

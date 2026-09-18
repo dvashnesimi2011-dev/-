@@ -164,7 +164,7 @@ $all('[data-activity]').forEach(el => {
     const type = el.dataset.activity;
     if (type === 'workshop') { goToScreen('client', 'c2', 'forward'); return; }
     if (type === 'course') {
-      showToast('client', 'קורס שיעורים: שיעור ניסיון ← תשלום ← בלוק 4 שיעורים. מתואם ישירות מול תמימה.', 'ti-info-circle');
+      showToast('client', 'קורס קרמיקה שנתי (אוק׳–יוני): ראשון/שני/שלישי 17:30–20:00 או שני בבוקר 9:30–12:00 · 800 ₪ לבלוק של 4 שיעורים. מתואם ישירות מול תמימה.', 'ti-info-circle');
     } else {
       showToast('client', 'מכירת כלי קרמיקה תיפתח בשלב הבא של הפרויקט.', 'ti-clock');
     }
